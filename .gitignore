@@ -1,6 +1,8 @@
+/tmp
 /data
 /img
 /log
+*.pkl
 *.swp
 # Byte-compiled / optimized / DLL files
 __pycache__/
