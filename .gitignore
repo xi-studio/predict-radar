@@ -1,7 +1,9 @@
 /tmp
+/res
 /data
 /img
 /log
+/checkpoints
 *.pkl
 *.swp
 # Byte-compiled / optimized / DLL files
