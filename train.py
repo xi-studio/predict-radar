@@ -11,7 +11,7 @@ import torchvision.transforms as transforms
 import torchvision.utils as vutils
 from torch.autograd import Variable
 
-#from utils.dataset import Facades
+from utils.dataset import Radars
 from model.Discriminator import Discriminator
 from model.Generator import Generator
 import numpy as np
