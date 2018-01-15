@@ -27,13 +27,12 @@ parser.add_argument('--beta1', type=float, default=0.5, help='beta1 for adam. de
 parser.add_argument('--cuda', action='store_true', help='enables cuda')
 parser.add_argument('--outf', default='checkpoints/', help='folder to output images and model checkpoints')
 parser.add_argument('--manualSeed', type=int, help='manual seed')
-parser.add_argument('--dataPath', default='facades/train/', help='path to training images')
+parser.add_argument('--dataPath', default='/ldata/radar_20d_2000/', help='path to training images')
 parser.add_argument('--loadSize', type=int, default=286, help='scale image to this size')
 parser.add_argument('--fineSize', type=int, default=256, help='random crop image to this size')
 parser.add_argument('--flip', type=int, default=1, help='1 for flipping image randomly, 0 for not')
 parser.add_argument('--input_nc', type=int, default=3, help='channel number of input image')
 parser.add_argument('--output_nc', type=int, default=3, help='channel number of output image')
-parser.add_argument('--which_direction', default='AtoB', help='AtoB or BtoA')
 parser.add_argument('--lamb', type=int, default=100, help='weight on L1 term in objective')
 
 opt = parser.parse_args()
@@ -56,8 +55,7 @@ cudnn.benchmark = True
 
 ###########   DATASET   ###########
 #facades = Facades(opt.dataPath,opt.loadSize,opt.fineSize,opt.flip)
-dataset = np.load('data/radar_2000.npy') 
-dataset = dataset/16.0
+dataset = Radars()
 train_loader = torch.utils.data.DataLoader(dataset=dataset,
                                            batch_size=opt.batchSize,
                                            shuffle=True,
@@ -123,16 +121,15 @@ for epoch in range(1,opt.niter+1):
     for i, image in enumerate(train_loader):
         ########### fDx ###########
         netD.zero_grad()
-        if(opt.which_direction == 'AtoB'):
-            imgA = image[:,:3]
-            imgB = image[:,3:]
-        else:
-            imgA = image[:,:3]
-            imgB = image[:,3:]
+        imgA = image[0]
+        imgB = image[1]
+        
 
         # train with real data
-        real_A.data.resize_(imgA.size()).copy_(imgA)
-        real_B.data.resize_(imgB.size()).copy_(imgB)
+#        real_A.data.resize_(imgA.size()).copy_(imgA)
+#        real_B.data.resize_(imgB.size()).copy_(imgB)
+        real_A.data.copy_(imgA)
+        real_B.data.copy_(imgB)
         real_AB = torch.cat((real_A, real_B), 1)
 
 
