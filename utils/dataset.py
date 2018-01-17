@@ -1,3 +1,4 @@
+from __future__ import print_function
 import torch
 import numpy as np
 import torch.utils.data as data
@@ -11,7 +12,7 @@ def default_loader(path):
     f = h5py.File(path,'r')
     imgA, imgB = f['input'][:], f['output'][:]
     f.close()
-    return imgA, imgB
+    return imgA/16.0, imgB/16.0
  
 
 

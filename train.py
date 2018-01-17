@@ -15,6 +15,8 @@ from utils.dataset import Radars
 from model.Discriminator import Discriminator
 from model.Generator import Generator
 import numpy as np
+from scipy import misc
+import time
 
 
 parser = argparse.ArgumentParser(description='train pix2pix model')
@@ -55,7 +57,7 @@ cudnn.benchmark = True
 
 ###########   DATASET   ###########
 #facades = Facades(opt.dataPath,opt.loadSize,opt.fineSize,opt.flip)
-dataset = Radars()
+dataset = Radars(dataPath=opt.dataPath)
 train_loader = torch.utils.data.DataLoader(dataset=dataset,
                                            batch_size=opt.batchSize,
                                            shuffle=True,
@@ -118,6 +120,7 @@ fake_label = 0
 netD.train()
 netG.train()
 for epoch in range(1,opt.niter+1):
+    nowtime = time.time()
     for i, image in enumerate(train_loader):
         ########### fDx ###########
         netD.zero_grad()
@@ -168,17 +171,17 @@ for epoch in range(1,opt.niter+1):
             print('[%d/%d][%d/%d] Loss_D: %.4f Loss_G: %.4f Loss_L1: %.4f'
                       % (epoch, opt.niter, i, len(train_loader),
                          errD.data[0], errGAN.data[0], errL1.data[0]))
+    print('Time: %.4f' % (time.time() - nowtime))
 
     ########## Visualize #########
     if(epoch % 1 == 0):
-        r_B = real_B.data.resize_(256*3,256)
-        f_B = fake_B.data.resize_(256*3,256)
-        r_B = r_B.transpose(1,0)
-        f_B = f_B.transpose(1,0)
-        fake_C = torch.cat((r_B, f_B), 0)
-        vutils.save_image(fake_C,
-                    'res/radar_fake/fake_samples_epoch_%03d.png' % (epoch),
-                    normalize=True)
+        f_B = fake_B.cpu().data.numpy()
+        for n,pic in enumerate(f_B[0]):
+            misc.imsave('%s/%d_%d.png' % (opt.outf,epoch,n),pic)
+    if(epoch % 10 == 0):
+        print('save model:',epoch)
+        torch.save(netG.state_dict(), '%s/netG_20d_100.pth' % (opt.outf))
+        torch.save(netD.state_dict(), '%s/netD_20d_100.pth' % (opt.outf))
 
-torch.save(netG.state_dict(), '%s/netG.pth' % (opt.outf))
-torch.save(netD.state_dict(), '%s/netD.pth' % (opt.outf))
+torch.save(netG.state_dict(), '%s/netG_20d_100.pth' % (opt.outf))
+torch.save(netD.state_dict(), '%s/netD_20d_100.pth' % (opt.outf))
