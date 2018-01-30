@@ -122,6 +122,17 @@ class Generator(nn.Module):
         self.dconv7 = nn.ConvTranspose2d(ngf * 2 * 2, ngf, 4, 2, 1)
         self.dconv8 = nn.ConvTranspose2d(ngf * 2, output_nc, 4, 2, 1)
 
+
+
+        self.conv1 = nn.DataParallel(self.conv1)
+        self.conv2 = nn.DataParallel(self.conv2)
+        self.conv3 = nn.DataParallel(self.conv3)
+        self.conv4 = nn.DataParallel(self.conv4)
+        self.conv5 = nn.DataParallel(self.conv5)
+        self.conv6 = nn.DataParallel(self.conv6)
+        self.conv7 = nn.DataParallel(self.conv7)
+
+        
         self.batch_norm = nn.BatchNorm2d(ngf)
         self.batch_norm2 = nn.BatchNorm2d(ngf * 2)
         self.batch_norm4 = nn.BatchNorm2d(ngf * 4)

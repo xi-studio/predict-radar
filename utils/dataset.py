@@ -10,7 +10,8 @@ import h5py
 
 def default_loader(path):
     f = h5py.File(path,'r')
-    imgA, imgB = f['input'][:], f['output'][:]
+    imgA = f['input'][:]
+    imgB = f['input'][:]
     f.close()
     return imgA/16.0, imgB/16.0
  
@@ -19,7 +20,6 @@ def default_loader(path):
 class Radars(data.Dataset):
     def __init__(self,dataPath='/ldata/radar_20d_2000/'):
         super(Radars, self).__init__()
-        # list all images into a list
         self.image_list = [x for x in listdir(dataPath) ]
         self.dataPath = dataPath
 

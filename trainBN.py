@@ -13,7 +13,7 @@ from torch.autograd import Variable
 
 from utils.dataset import Radars
 from model.Discriminator import Discriminator
-from model.Generator import Generator
+from model.GeneratorBN import Generator
 import numpy as np
 from scipy import misc
 import time
