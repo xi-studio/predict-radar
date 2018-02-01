@@ -76,17 +76,17 @@ for i, image in enumerate(train_loader):
     imgA = image[0]
     imgB = image[1]
     real_A.data.copy_(imgA)
-    fake = netG(real_A)
-    fake = fake.cpu().data.numpy()
+    #fake = netG(real_A)
+    #fake = fake.cpu().data.numpy()
+    rA = imgA.numpy()
     target = imgB.numpy()
-    for n,pic in enumerate(fake[0]):
-        pic = pic*(pic>0.03)
-        rb = target[0,n]
-       
-        l1 = np.abs(pic - rb)
-        combine = np.concatenate((pic,rb),1)
-        combine = np.concatenate((combine,l1),1)
-        misc.imsave('%s/%d_%d.png' % (opt.outf,i,n),combine)
+    num = 0
+    for n,pic in enumerate(rA[0]):
+        misc.imsave('%s/%d_%d.png' % (opt.outf,i,num),pic)
+        num +=1
+    for n,pic in enumerate(target[0]):
+        misc.imsave('%s/%d_%d.png' % (opt.outf,i,num),pic)
+        num +=1
  
 
     if(i+1 >= opt.imgNum):

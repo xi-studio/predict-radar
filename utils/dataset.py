@@ -11,9 +11,9 @@ import h5py
 def default_loader(path):
     f = h5py.File(path,'r')
     imgA = f['input'][:]
-    imgB = f['input'][:]
+    imgB = f['output'][:]
     f.close()
-    return imgA/16.0, imgB/16.0
+    return imgA/255.0, imgB/255.0
  
 
 
