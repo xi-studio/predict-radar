@@ -178,8 +178,8 @@ for epoch in range(1,opt.niter+1):
             misc.imsave('%s/%d_%d.png' % (opt.outf,epoch,n),pic)
     if(epoch % 10 == 0):
         print('save model:',epoch)
-        torch.save(netG.state_dict(), '%s/netG_1d.pth' % (opt.outf))
-        torch.save(netD.state_dict(), '%s/netD_1d.pth' % (opt.outf))
+        torch.save(netG.state_dict(), '%s/netG.pth' % (opt.outf))
+        torch.save(netD.state_dict(), '%s/netD.pth' % (opt.outf))
 
-torch.save(netG.state_dict(), '%s/netG_1d.pth' % (opt.outf))
-torch.save(netD.state_dict(), '%s/netD_1d.pth' % (opt.outf))
+torch.save(netG.state_dict(), '%s/netG.pth' % (opt.outf))
+torch.save(netD.state_dict(), '%s/netD.pth' % (opt.outf))

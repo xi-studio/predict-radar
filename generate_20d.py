@@ -78,7 +78,11 @@ for i, image in enumerate(train_loader):
     real_A.data.copy_(imgA)
     fake = netG(real_A)
     fake = fake.cpu().data.numpy()
+    if np.sum(fake) <2000:
+        print('coninue')
+        continue
     target = imgB.numpy()
+    print(i)
     for n,pic in enumerate(fake[0]):
         pic = pic*(pic>0.03)
         rb = target[0,n]

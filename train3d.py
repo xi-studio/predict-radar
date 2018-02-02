@@ -63,6 +63,8 @@ train_loader = torch.utils.data.DataLoader(dataset=dataset,
                                            shuffle=True,
                                            num_workers=2)
 
+if(opt.cuda):
+    gpu = 1
 ###########   MODEL   ###########
 # custom weights initialization called on netG and netD
 def weights_init(m):
@@ -81,8 +83,8 @@ nc = 3
 netD = Discriminator(opt.input_nc,opt.output_nc,ndf)
 netG = Generator(opt.input_nc, opt.output_nc, opt.ngf)
 if(opt.cuda):
-    netD.cuda()
-    netG.cuda()
+    netD.cuda(gpu)
+    netG.cuda(gpu)
 
 netG.apply(weights_init)
 netD.apply(weights_init)
@@ -109,9 +111,9 @@ real_B = Variable(real_B)
 label = Variable(label)
 
 if(opt.cuda):
-    real_A = real_A.cuda()
-    real_B = real_B.cuda()
-    label = label.cuda()
+    real_A = real_A.cuda(gpu)
+    real_B = real_B.cuda(gpu)
+    label = label.cuda(gpu)
 
 real_label = 1
 fake_label = 0
@@ -126,7 +128,6 @@ for epoch in range(1,opt.niter+1):
         netD.zero_grad()
         imgA = image[0]
         imgB = image[1]
-        print(imgA.size())
         
 
         # train with real data
@@ -175,7 +176,7 @@ for epoch in range(1,opt.niter+1):
     ########## Visualize #########
     if(epoch % 1 == 0):
         f_B = fake_B.cpu().data.numpy()
-        for n,pic in enumerate(f_B[0]):
+        for n,pic in enumerate(f_B[0][0]):
             misc.imsave('%s/%d_%d.png' % (opt.outf,epoch,n),pic)
     if(epoch % 10 == 0):
         print('save model:',epoch)
