@@ -1,4 +1,5 @@
 import torch.nn as nn
+from torch.nn import DataParallel
 
 class Discriminator(nn.Module):
     def __init__(self,input_nc,output_nc,ndf):
@@ -19,6 +20,11 @@ class Discriminator(nn.Module):
         self.layer5 = nn.Sequential(nn.Conv2d(ndf*8,1,kernel_size=4,stride=1,padding=1),
                                  nn.Sigmoid())
         # 30 x 30
+        self.layer1 = DataParallel(self.layer1)
+        self.layer2 = DataParallel(self.layer2)
+        self.layer3 = DataParallel(self.layer3)
+        self.layer4 = DataParallel(self.layer4)
+        self.layer5 = DataParallel(self.layer5)
 
     def forward(self,x):
         out = self.layer1(x)

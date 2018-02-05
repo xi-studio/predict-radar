@@ -11,7 +11,7 @@ import torchvision.transforms as transforms
 import torchvision.utils as vutils
 from torch.autograd import Variable
 
-from utils.dataset import Radars
+from utils.resdataset import Radars
 from model.resnetD import Discriminator
 from model.resnetG import Generator
 import numpy as np

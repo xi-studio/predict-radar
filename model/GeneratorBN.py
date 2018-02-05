@@ -1,6 +1,7 @@
 #Credit: code copied from https://github.com/mrzhu-cool/pix2pix-pytorch/blob/master/models.py
 import torch.nn as nn
 import torch
+from torch.nn import DataParallel
 
 class Generator(nn.Module):
     def __init__(self, input_nc, output_nc, ngf):
@@ -21,6 +22,27 @@ class Generator(nn.Module):
         self.dconv6 = nn.ConvTranspose2d(ngf * 4 * 2, ngf * 2, 4, 2, 1)
         self.dconv7 = nn.ConvTranspose2d(ngf * 2 * 2, ngf, 4, 2, 1)
         self.dconv8 = nn.ConvTranspose2d(ngf * 2, output_nc, 4, 2, 1)
+
+
+        self.conv1 = DataParallel(self.conv1)
+        self.conv2 = DataParallel(self.conv2)
+        self.conv3 = DataParallel(self.conv3)
+        self.conv4 = DataParallel(self.conv4)
+        self.conv5 = DataParallel(self.conv5)
+        self.conv6 = DataParallel(self.conv6)
+        self.conv7 = DataParallel(self.conv7)
+        self.conv8 = DataParallel(self.conv8)
+       
+        
+        self.dconv1 = DataParallel(self.dconv1)
+        self.dconv2 = DataParallel(self.dconv2)
+        self.dconv3 = DataParallel(self.dconv3)
+        self.dconv4 = DataParallel(self.dconv4)
+        self.dconv5 = DataParallel(self.dconv5)
+        self.dconv6 = DataParallel(self.dconv6)
+        self.dconv7 = DataParallel(self.dconv7)
+        self.dconv8 = DataParallel(self.dconv8)
+       
 
 
         self.leaky_relu = nn.LeakyReLU(0.2, True)

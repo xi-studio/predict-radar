@@ -57,7 +57,7 @@ cudnn.benchmark = True
 
 ###########   DATASET   ###########
 #facades = Facades(opt.dataPath,opt.loadSize,opt.fineSize,opt.flip)
-dataset = Radars(dataPath=opt.dataPath)
+dataset = Radars(dataPath=opt.dataPath,length=15000)
 train_loader = torch.utils.data.DataLoader(dataset=dataset,
                                            batch_size=opt.batchSize,
                                            shuffle=True,

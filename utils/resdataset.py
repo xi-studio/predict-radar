@@ -7,6 +7,8 @@ from os.path import join
 import os
 import random
 import h5py
+import cPickle
+import gzip
 
 def default_loader(path):
     f = h5py.File(path,'r')
@@ -18,16 +20,19 @@ def default_loader(path):
 
 
 class Radars(data.Dataset):
-    def __init__(self,dataPath='/ldata/radar_20d_2000/',length=-1):
+    def __init__(self,dataPath='data/idx.pkl.gz'):
         super(Radars, self).__init__()
-        l = listdir(dataPath)
-        l.sort()
-        self.image_list = [x for x in l][:length]
-        self.dataPath = dataPath
+        f = gzip.open(dataPath)
+        train = cPickle.load(f)
+        test = cPickle.load(f)
+        f.close()
+        self.image_list = train
+        print(len(train))
+        f.close()
 
     def __getitem__(self, index):
         # 1. Read one data from file (e.g. using numpy.fromfile, PIL.Image.open).
-        path = os.path.join(self.dataPath,self.image_list[index])
+        path = self.image_list[index]
         imgA,imgB = default_loader(path) # 512x256
 
         # 2. seperate image A and B; Scale; Random Crop; to Tensor
