@@ -16,7 +16,7 @@ class ResBlock(nn.Module):
 
     def forward(self, input):
         output = self.res_block(input)
-        return input + (0.3*output)
+        return input + (0.1*output)
 
 class Generator(nn.Module):
     def __init__(self, input_nc, output_nc, ngf):
