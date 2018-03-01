@@ -57,7 +57,7 @@ cudnn.benchmark = True
 
 ###########   DATASET   ###########
 #facades = Facades(opt.dataPath,opt.loadSize,opt.fineSize,opt.flip)
-dataset = Radars(dataPath=opt.dataPath,length=15000)
+dataset = Radars(dataPath=opt.dataPath,length=10000)
 train_loader = torch.utils.data.DataLoader(dataset=dataset,
                                            batch_size=opt.batchSize,
                                            shuffle=True,
@@ -108,6 +108,9 @@ real_A = Variable(real_A)
 real_B = Variable(real_B)
 label = Variable(label)
 
+
+min_cost = 10
+
 if(opt.cuda):
     real_A = real_A.cuda()
     real_B = real_B.cuda()
@@ -134,41 +137,49 @@ for epoch in range(1,opt.niter+1):
         real_AB = torch.cat((real_A, real_B), 1)
 
 
-        output = netD(real_AB)
-        label.data.resize_(output.size())
-        label.data.fill_(real_label)
-        errD_real = criterion(output, label)
-        errD_real.backward()
+        #output = netD(real_AB)
+        #label.data.resize_(output.size())
+        #label.data.fill_(real_label)
+        #errD_real = criterion(output, label)
+        #errD_real.backward()
 
         # train with fake
         fake_B = netG(real_A)
-        label.data.fill_(fake_label)
+        #label.data.fill_(fake_label)
 
-        fake_AB = torch.cat((real_A, fake_B), 1)
-        output = netD(fake_AB.detach())
-        errD_fake = criterion(output,label)
-        errD_fake.backward()
+        #fake_AB = torch.cat((real_A, fake_B), 1)
+        #output = netD(fake_AB.detach())
+        #errD_fake = criterion(output,label)
+        #errD_fake.backward()
 
-        errD = (errD_fake + errD_real)/2
-        optimizerD.step()
+        #errD = (errD_fake + errD_real)/2
+        #optimizerD.step()
 
         ########### fGx ###########
         netG.zero_grad()
-        label.data.fill_(real_label)
-        output = netD(fake_AB)
-        errGAN = criterion(output, label)
+        #label.data.fill_(real_label)
+        #output = netD(fake_AB)
+        #errGAN = criterion(output, label)
         errL1 = criterionL1(fake_B,real_B)
-        errG = errGAN + opt.lamb*errL1
+        #errG = errGAN + opt.lamb*errL1
+        errG = errL1
 
         errG.backward()
 
         optimizerG.step()
 
+        if errL1.data[0] < min_cost:
+            min_cost = errL1.data[0]
+            print('save min model',epoch,i,min_cost)
+            torch.save(netG.state_dict(), '%s/netG_min.pth' % (opt.outf))
         ########### Logging ##########
         if(i % 50 == 0):
-            print('[%d/%d][%d/%d] Loss_D: %.4f Loss_G: %.4f Loss_L1: %.4f'
+            #print('[%d/%d][%d/%d] Loss_D: %.4f Loss_G: %.4f Loss_L1: %.4f'
+            #          % (epoch, opt.niter, i, len(train_loader),
+            #             errD.data[0], errGAN.data[0], errL1.data[0]))
+            print('[%d/%d][%d/%d] Loss_L1: %.4f'
                       % (epoch, opt.niter, i, len(train_loader),
-                         errD.data[0], errGAN.data[0], errL1.data[0]))
+                          errL1.data[0]))
     print('Time: %.4f' % (time.time() - nowtime))
 
     ########## Visualize #########
@@ -179,7 +190,7 @@ for epoch in range(1,opt.niter+1):
     if(epoch % 10 == 0):
         print('save model:',epoch)
         torch.save(netG.state_dict(), '%s/netG.pth' % (opt.outf))
-        torch.save(netD.state_dict(), '%s/netD.pth' % (opt.outf))
+        #torch.save(netD.state_dict(), '%s/netD.pth' % (opt.outf))
 
 torch.save(netG.state_dict(), '%s/netG.pth' % (opt.outf))
-torch.save(netD.state_dict(), '%s/netD.pth' % (opt.outf))
+#torch.save(netD.state_dict(), '%s/netD.pth' % (opt.outf))
